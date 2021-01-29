@@ -1,6 +1,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path=require('path')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = [
+  "none",
 	"eval",
 	"eval-cheap-source-map",
 	"eval-cheap-module-source-map",
@@ -14,8 +17,7 @@ module.exports = [
 	"hidden-source-map",
 	"nosources-source-map"
 ].map(devtool => ({
-  devtool,
-	mode: "none",
+  devtool:devtool==='none'?undefined:devtool,
 	entry:'./src/index.js',
 	output: {
 		filename: `js/${devtool}.js`
@@ -30,12 +32,18 @@ module.exports = [
             presets:['@babel/preset-env']
           }
         }
+      },
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
       }
     ]
   },
   plugins:[
+    new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
-      filename:`${devtool}.html`
+      filename:`${devtool}.html`,
+      template: path.resolve(__dirname, './index.html'),
     })
   ]
 }));
